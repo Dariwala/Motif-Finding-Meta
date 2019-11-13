@@ -40,7 +40,7 @@ for dataset in datasets:
             os.makedirs(dir + "Pareto front\\" + dataset+"\\"+str(i))
 
 
-name = str(sys.argv)[1]
+name = sys.argv[1]
 
 input_file = name+".txt"
 seqs = open(input_file,'r')
