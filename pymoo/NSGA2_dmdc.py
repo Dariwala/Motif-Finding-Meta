@@ -9,7 +9,7 @@ from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
 from pymoo.factory import get_performance_indicator
 import numpy as np
 import matplotlib.pyplot as plt
-import os
+import os,sys
 
 dir = "NSGA-DefaultMutation-DefaultCrossover\\"
 
@@ -33,7 +33,7 @@ for dataset in datasets:
     if os.path.exists(dir+"Pareto front\\"+dataset)==False:
         os.makedirs(dir+"Pareto front\\"+dataset)
 
-name = "yst04r"
+name = sys.argv[1]
 
 input_file = name+".txt"
 seqs = open(input_file,'r')
