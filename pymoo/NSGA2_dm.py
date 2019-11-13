@@ -28,12 +28,18 @@ if os.path.exists(dir + "Pareto front\\") == False:
 for dataset in datasets:
     if os.path.exists(dir+"Hv-data\\"+dataset)==False:
         os.makedirs(dir+"Hv-data\\"+dataset)
+        for i in [16,18,20,22]:
+            os.makedirs(dir + "Hv-data\\" + dataset+"\\"+str(i))
     if os.path.exists(dir+"Best Outputs\\"+dataset)==False:
         os.makedirs(dir+"Best Outputs\\"+dataset)
+        #for i in [16,18,20,22]:
+        #    os.makedirs(dir + "Best Outputs\\" + dataset+"\\"+str(i))
     if os.path.exists(dir+"Pareto front\\"+dataset)==False:
         os.makedirs(dir+"Pareto front\\"+dataset)
+        for i in [16,18,20,22]:
+            os.makedirs(dir + "Pareto front\\" + dataset+"\\"+str(i))
 
-name = "yst04r"
+name = str(sys.argv)[1]
 
 input_file = name+".txt"
 seqs = open(input_file,'r')
@@ -61,8 +67,8 @@ for l_mer in [16,18,20,22]:
     hvs = []
     results = []
     for r in range(20):
-        volume = open(dir+"Hv-data\\"+name+"\\run"+str(r)+".txt",'w')
-        pareto = open(dir + "Pareto front\\" + name + "\\run" + str(r) + ".txt", 'w')
+        volume = open(dir + "Hv-data\\" + name + "\\" + str(l_mer) + "\\run" + str(r) + ".txt", 'w')
+        pareto = open(dir + "Pareto front\\" + name + "\\" + str(l_mer) + "\\run" + str(r) + ".txt", 'w')
         res = minimize(motif_finding,
                        algorithm,
                        ('n_gen', 1000),
