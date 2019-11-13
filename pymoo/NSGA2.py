@@ -9,10 +9,33 @@ from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
 from pymoo.factory import get_performance_indicator
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
+dir = "NSGA-MyMutation-MyCrossover\\"
 
+datasets = ["hm03","hm09g","yst04r","yst08r","dm01g","dm03g"]
 
-input_file = "yst04r.txt"
+if os.path.exists(dir) == False:
+    os.makedirs(dir)
+if os.path.exists(dir + "Hv-data\\") == False:
+    os.makedirs(dir+ "Hv-data\\")
+
+if os.path.exists(dir + "Best Outputs\\") == False:
+    os.makedirs(dir+ "Best Outputs\\")
+if os.path.exists(dir + "Pareto front\\") == False:
+    os.makedirs(dir+ "Pareto front\\")
+
+for dataset in datasets:
+    if os.path.exists(dir+"Hv-data\\"+dataset)==False:
+        os.makedirs(dir+"Hv-data\\"+dataset)
+    if os.path.exists(dir+"Best Outputs\\"+dataset)==False:
+        os.makedirs(dir+"Best Outputs\\"+dataset)
+    if os.path.exists(dir+"Pareto front\\"+dataset)==False:
+        os.makedirs(dir+"Pareto front\\"+dataset)
+
+name = "yst04r"
+
+input_file = name+".txt"
 seqs = open(input_file,'r')
 seqs = seqs.readlines()
 sequences = []
@@ -20,8 +43,8 @@ no_of_objs = 2
 
 for line in seqs:
     sequences.append(line[:-1])
-parent = "yst04r//"
-for l_mer in [16,17,20,22]:
+parent = dir + "Best Outputs\\"+name+"\\"
+for l_mer in [16,18,20,22]:
     reference_points = np.ones((1,no_of_objs))*1.2
     #print(reference_points)
     motif_finding = MotifFinding(n_var = len(sequences),n_obj = no_of_objs,xl=0,xu = len(sequences[0])-l_mer,seqs = sequences,l_mer = l_mer)
@@ -29,7 +52,7 @@ for l_mer in [16,17,20,22]:
     algorithm = NSGA2(pop_size=200,
                       elimate_duplicates=True,
                       mutation=MyMutation(prob=0.6)
-                      ,crossover=SimulatedBinaryCrossover(prob = 0.9,eta = 15)
+                      ,crossover=MyCrossover(prob = 0.9)
                       )
 
 
@@ -37,7 +60,9 @@ for l_mer in [16,17,20,22]:
 
     hvs = []
     results = []
-    for r in range(15):
+    for r in range(20):
+        volume = open(dir+"Hv-data\\"+name+"\\run"+str(r)+".txt",'w')
+        pareto = open(dir + "Pareto front\\" + name + "\\run" + str(r) + ".txt", 'w')
         res = minimize(motif_finding,
                        algorithm,
                        ('n_gen', 1000),
@@ -47,9 +72,9 @@ for l_mer in [16,17,20,22]:
 
         # plt.figure(1)
         # plt.clf()
-        '''gens = []
+        gens = []
         for g, a in enumerate(res.history):
-            if g % 20 == 0 and g>50:
+            if g % 40 == 0:
                 a.opt = a.pop.copy()
                 #a.opt = a.opt[a.opt.collect(lambda ind: ind.feasible)[:, 0]]
                 #I = NonDominatedSorting().do(a.opt.get("F"),
@@ -58,11 +83,17 @@ for l_mer in [16,17,20,22]:
                 X, F, CV, G = a.opt.get("X", "F", "CV", "G")
                 hvs.append(hv.calc(F))
                 gens.append(g)
-                #print("hv", hv.calc(A))
+
+        for v in hvs:
+            volume.write(str(v)+"\n")
+        for re in res.F:
+            pareto.write(str(-re[0])+"\t"+str(-re[1])+"\n")
+        volume.close()
+        pareto.close()
     
-        plt.plot(gens,hvs)
-        plt.show()'''
-        print("Best solution found:F = %s" % (np.min(res.F[:,0])))
+        #plt.plot(gens,hvs)
+        #plt.show()
+        print(name,l_mer,r,np.min(res.F[:,0]))
         results.append((np.min(res.F[:,0]),np.min(res.F[:,1])))
     output = open(parent + str(l_mer) + ".txt", "w")
     for r in results:

@@ -11,10 +11,10 @@ def similarity(str1,str2):
 	return count/len(str1)
 
 class MotifFinding(Problem):
-	def __init__(self, n_var, n_obj,xl,xu,seqs,l_mer):
+	def __init__(self, n_var, n_obj,xl,xu,seqs,l_mer,**kwargs):
 		self.seqs = seqs
 		self.l_mer = l_mer
-		super().__init__(n_var=n_var, n_obj=n_obj, xl=xl, xu=xu, type_var=int)
+		super().__init__(n_var=n_var, n_obj=n_obj, xl=xl, xu=xu, type_var=int,**kwargs)
 
 	def _evaluate(self, x, out, *args, **kwargs):
 		f1 = np.zeros((len(x),1),dtype=np.double)
